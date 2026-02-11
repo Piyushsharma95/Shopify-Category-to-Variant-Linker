@@ -1,51 +1,155 @@
 Shopify Category-to-Variant Linker
 🎯 Overview
-This script ensures a seamless user experience for Shopify stores selling multi-variant products (e.g., Mattresses in King, Queen, Twin sizes).
 
-When a customer is browsing a specific category (e.g., the "Queen" collection), this script dynamically modifies all product links on that page to automatically include the correct variant ID. This ensures that when the user clicks a product, they land on the product page with the Queen variant already selected.
+The Shopify Category-to-Variant Linker enhances the shopping experience for stores offering multi-variant products (e.g., mattresses available in King, Queen, and Twin sizes).
 
-✨ Features
-Automatic Detection: Detects keywords (king, queen, twin) directly from the collection URL.
+When a customer browses a specific collection (for example, the Queen collection), this script dynamically updates all product links on that page to include the appropriate variant ID. As a result, when a product is selected, the customer lands on the product page with the correct variant pre-selected.
 
-AJAX Compatible: Uses a MutationObserver to remain active even after price filters, size filters, or infinite scrolling are used.
+This ensures a seamless and intuitive browsing experience while reducing friction during the purchasing process.
 
-Universal Compatibility: Searches through multiple data sources including <select> options, JSON metadata, and data attributes.
+✨ Key Features
+✔ Automatic Variant Detection
 
-Zero-Config Fallback: Defaults to standard links if no matching variant is found.
+Detects size keywords (e.g., king, queen, twin) directly from the collection URL.
 
-🚀 Installation
-1. Create a Snippet
-Create a new snippet in your Shopify theme named category-variant-linker.liquid and paste the code into it.
+✔ AJAX Compatibility
 
-2. Initialize in Layout
-Render the snippet in your layout/theme.liquid file before the closing </body> tag:
+Utilizes a MutationObserver to remain functional even after dynamic content updates such as:
 
-Code snippet
+Price filters
+
+Size filters
+
+Brand filters
+
+Infinite scrolling
+
+✔ Universal Theme Compatibility
+
+Searches for matching variant IDs using multiple data sources:
+
+<select name="id"> dropdown options
+
+Embedded JSON metadata
+
+HTML data attributes
+
+✔ Safe Fallback
+
+If no matching variant is found, product links remain unchanged to prevent errors.
+
+🚀 Installation Guide
+1️⃣ Create a Snippet
+
+In your Shopify theme:
+
+Navigate to Online Store → Themes → Edit Code
+
+Create a new snippet named:
+
+category-variant-linker.liquid
+
+
+Paste the script into this file.
+
+2️⃣ Render the Snippet in Layout
+
+Open:
+
+layout/theme.liquid
+
+
+Add the following code just before the closing </body> tag:
+
 {% render 'category-variant-linker' %}
-🛠️ Technical Details
-The Detection Logic
-The script identifies the "Target Size" by checking the current browser URL. | URL Keyword | Target Variant Name | | :--- | :--- | | .../collections/king-size | Finds variant containing "King" | | .../collections/queen | Finds variant containing "Queen" | | .../collections/twin-mattress | Finds variant containing "Twin" |
 
-The Search Hierarchy
-To find the correct variant_id, the script scans the HTML of each product card in this order:
 
-Select Dropdowns: Looks for <select name="id"> options containing the keyword.
+Save the file.
 
-JSON Metadata: Parses <script type="application/json"> blocks (commonly used by themes for variant data).
+🛠 Technical Details
+Detection Logic
 
-Data Attributes: Checks for data-variant-id attributes on the product container.
+The script determines the target variant by analyzing the current collection URL.
 
-Handling Price Filters
-Standard Liquid code fails when AJAX filters (Price, Color, Brand) refresh the product grid. This script uses the Web Mutation API to watch the DOM:
+Collection URL Example	Target Variant
+/collections/king-size	Variant containing “King”
+/collections/queen	Variant containing “Queen”
+/collections/twin-mattress	Variant containing “Twin”
 
-JavaScript
+The keyword must be present in the collection handle.
+
+Variant Search Hierarchy
+
+To identify the correct variant_id, the script scans each product card using the following priority order:
+
+Select Dropdowns
+Searches for <select name="id"> options containing the relevant keyword.
+
+JSON Metadata
+Parses <script type="application/json"> blocks commonly used by themes to store variant data.
+
+Data Attributes
+Checks for data-variant-id attributes within the product container.
+
+Handling AJAX Filters & Dynamic Content
+
+Standard Liquid-based solutions fail when product grids refresh dynamically via filters or infinite scrolling.
+
+This script uses the Web Mutation API:
+
 const observer = new MutationObserver(applyCategoryVariantLinks);
 observer.observe(grid, { childList: true, subtree: true });
-This ensures that the moment new products are loaded via a filter, their links are instantly corrected.
+
+
+This ensures that:
+
+Newly loaded products are immediately processed
+
+Links are corrected in real time
+
+Functionality remains stable across dynamic updates
 
 ⚠️ Requirements
-Keyword Match: The Collection Handle must contain the words "king", "queen", or "twin".
 
-Variant Match: The Variant Title must contain the words "king", "queen", or "twin".
+To ensure proper functionality, the following conditions must be met:
 
-Selector Accuracy: The script targets .item-product. If your theme uses a different class for product cards, update the querySelectorAll line.
+1. Keyword Matching
+
+The collection handle must include one of the following keywords:
+
+king
+
+queen
+
+twin
+
+2. Variant Title Matching
+
+The variant title must contain the corresponding keyword:
+
+“King”
+
+“Queen”
+
+“Twin”
+
+3. Selector Accuracy
+
+The script targets product cards using the class:
+
+.item-product
+
+
+If your theme uses a different class name for product containers, update the querySelectorAll selector accordingly.
+
+📌 Recommended Use Cases
+
+This solution is ideal for stores selling:
+
+Furniture (Bed sizes)
+
+Mattresses
+
+Apparel (Size-based collections)
+
+Any size-segmented product catalog
