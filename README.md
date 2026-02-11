@@ -1,0 +1,1 @@
+# Shopify-Category-to-Variant-Linker
